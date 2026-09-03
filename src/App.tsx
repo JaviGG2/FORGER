@@ -8,12 +8,14 @@ import ProductoGuru from './pages/ProductoGuru'
 import ProductoBoss from './pages/ProductoBoss'
 import Eventos from './pages/eventos/Eventos'
 import EventoForgerLan from './pages/eventos/EventoForgerLive'
+import ScrollToTop from './components/ScrollToTop'
 
 import './css/estilos.css'
 
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<><Banner /><Home /></>} />
