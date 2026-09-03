@@ -1,0 +1,141 @@
+.producto-volver {
+  display: inline-block;
+  margin-bottom: 32px;
+  color: var(--tinta-suave);
+  font-size: 14px;
+  transition: color 0.2s;
+}
+
+.producto-volver:hover {
+  color: var(--tinta);
+}
+
+.productos-hero {
+  padding: 80px 20px 40px;
+  text-align: center;
+}
+
+.productos-hero-titulo {
+  font-size: clamp(48px, 10vw, 80px);
+  letter-spacing: 0.06em;
+}
+
+.productos-hero-sub {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--tinta-suave);
+  margin-top: 12px;
+}
+
+.filtros {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 40px 0;
+  flex-wrap: wrap;
+}
+
+.filtros-btn {
+  padding: 12px 24px;
+  border: 1px solid var(--linea);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--texto);
+  font-family: var(--fuente-titulo);
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filtros-btn:hover,
+.filtros-btn--activo {
+  background: var(--tinta);
+  color: var(--fondo);
+  border-color: var(--tinta);
+}
+
+.card-contenido {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-descripcion {
+  font-size: 14px;
+  color: var(--tinta-suave);
+  line-height: 1.5;
+}
+
+.card-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.card-spec {
+  padding: 4px 12px;
+  background: var(--fondo-secundario);
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--tinta-suave);
+}
+
+.producto-detalle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.producto-detalle-img {
+  width: 100%;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.producto-detalle-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.producto-detalle-nombre {
+  font-size: clamp(32px, 5vw, 56px);
+}
+
+.producto-detalle-precio {
+  font-size: 28px;
+  color: var(--tinta-suave);
+}
+
+.producto-detalle-desc {
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--tinta-suave);
+}
+
+.producto-detalle-specs {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.producto-detalle-specs li {
+  padding: 12px 16px;
+  border: 1px solid var(--linea);
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .producto-detalle {
+    grid-template-columns: 1fr;
+  }
+}

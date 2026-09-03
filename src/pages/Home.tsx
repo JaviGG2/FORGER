@@ -2,6 +2,12 @@ import { Link } from 'react-router-dom'
 import { productos } from '../datos.js'
 import '../css/Home.css'
 
+const rutaPorId: Record<string, string> = {
+  TWIN: 'twin',
+  GURUIBAMI: 'guru',
+  BOSS: 'boss',
+}
+
 export default function Home() {
   const destacados = productos.slice(0, 3)
 
@@ -12,7 +18,7 @@ export default function Home() {
           <h2 className="seccion-titulo">Productos mas Destacados</h2>
           <div className="grid-productos">
             {destacados.map(p => (
-              <Link key={p.id} to={`/producto/${p.id}`} className="card">
+              <Link key={p.id} to={`/productos/${rutaPorId[p.id]}`} className="card">
                 <img className="card-img" src={p.imagen} alt={p.nombre} />
                 <h3 className="card-nombre">{p.nombre}</h3>
                 <p className="card-precio">{p.precio}</p>
