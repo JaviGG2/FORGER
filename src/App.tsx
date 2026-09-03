@@ -24,7 +24,7 @@ export default function App() {
           <Route path="/productos/guru" element={<ProductoGuru />} />
           <Route path="/productos/boss" element={<ProductoBoss />} />
           <Route path="/eventos" element={<Eventos />} />
-          <Route path="/eventos/forger-lan-2026" element={<EventoForgerLan />} />
+          <Route path="/eventos/forger-live-25" element={<EventoForgerLan />} />
         </Route>
       </Routes>
     </BrowserRouter>
