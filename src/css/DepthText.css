@@ -1,0 +1,35 @@
+/* ============================================================
+   DepthText.css · Texto 3D con capas (efecto de profundidad)
+   ============================================================ */
+
+.depth-text {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+}
+
+.depth-text-rotador {
+  display: block;
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.depth-text-capa {
+  display: block;
+  line-height: 1;
+  white-space: nowrap;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.depth-text-capa--frente {
+  position: relative;
+  z-index: 2;
+}
+
+.depth-text-capa--fondo {
+  position: absolute;
+  top: 0;
+  left: 0;
+}

@@ -1,0 +1,142 @@
+/* ============================================================
+   LiquidGlassCarousel.css · Carrusel con tarjetas de cristal liquido
+   ============================================================ */
+
+.glass-carousel {
+  position: relative;
+  width: 100%;
+}
+
+.glass-carousel-pista {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 8px 4px 22px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.glass-carousel-pista::-webkit-scrollbar {
+  height: 6px;
+}
+
+.glass-carousel-pista::-webkit-scrollbar-thumb {
+  background: var(--linea);
+  border-radius: 999px;
+}
+
+.glass-card {
+  position: relative;
+  flex: 0 0 190px;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 20px;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03) 55%);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  color: var(--tinta);
+  font-family: var(--fuente-texto);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.42);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* Brillo "liquido" en la superficie */
+.glass-card-brillo {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(130px 90px at 18% 0%, rgba(255, 255, 255, 0.4), transparent 70%);
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.glass-card-portada {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.glass-card-portada img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.glass-card-vacia {
+  color: var(--tinta-suave);
+  font-size: 40px;
+}
+
+.glass-card-duracion {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--tinta);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  backdrop-filter: blur(4px);
+}
+
+.glass-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  padding: 12px 14px 16px;
+}
+
+.glass-card-titulo {
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.glass-card-artista {
+  font-size: 12px;
+  color: var(--tinta-suave);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.glass-card--entrada {
+  animation: glassEntrada 0.5s ease both;
+}
+
+@keyframes glassEntrada {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .glass-card {
+    flex: 0 0 150px;
+  }
+}

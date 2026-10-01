@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
-import { Link } from 'react-router-dom'
 import {
   buscarPistas,
   nombreArtista,
@@ -10,6 +9,8 @@ import {
   urlPortada,
 } from '../servicios/audius'
 import type { AudiusTrack } from '../servicios/audius'
+import LiquidGlassCarousel from '../components/ui/LiquidGlassCarousel'
+import type { LiquidGlassItem } from '../components/ui/LiquidGlassCarousel'
 import '../css/Musica.css'
 
 const CLAVE_DESCARGA = 'forger123'
@@ -92,7 +93,18 @@ export default function Musica() {
   const [claveError, setClaveError] = useState('')
 
   const audioRef = useRef<HTMLAudioElement>(null)
+  const musicTextRef = useRef<HTMLSpanElement>(null)
   const pistaActual = indice >= 0 ? pistas[indice] ?? null : null
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      musicTextRef.current?.classList.add('fx-active')
+      setTimeout(() => {
+        musicTextRef.current?.classList.remove('fx-active')
+      }, 2000)
+    }, 30000)
+    return () => clearInterval(interval)
+  }, [])
 
   useEffect(() => {
     let activo = true
@@ -156,6 +168,7 @@ export default function Musica() {
     setBusqueda('')
     setGenero(valor)
   }
+
 
   const reproducir = (posicion: number) => {
     if (posicion === indice) {
@@ -251,19 +264,35 @@ export default function Musica() {
     }
   }
 
+  // Canciones mas cortas del catalogo actual, para el carrusel destacado.
+  const cancionesCortas = [...pistas]
+    .filter((pista) => pista.duration > 0)
+    .sort((a, b) => a.duration - b.duration)
+    .slice(0, 10)
+
+  const itemsCortas: LiquidGlassItem[] = cancionesCortas.map((pista) => ({
+    id: pista.id,
+    titulo: pista.title,
+    artista: nombreArtista(pista),
+    portada: urlPortada(pista),
+    duracion: pista.duration,
+  }))
+
   return (
     <section className="musica">
       <div className="contenedor">
-        <Link to="/" className="producto-volver">← Volver al Inicio</Link>
+        
 
         <header className="musica-cabecera">
           <h1 className="musica-titulo">
-            FORGER <span className="musica-titulo-music">Music</span>
+            FORGER <span className="musica-titulo-music" ref={musicTextRef}>Music</span>
           </h1>
 
           <a className="beta">BETA</a>
           
         </header>
+
+        
 
         <form className="musica-buscador" onSubmit={enviarBusqueda}>
           <div className="musica-campo">
@@ -331,26 +360,26 @@ export default function Musica() {
                 }
               }}
             >
-              <span className="musica-pista-accion">
-                {posicion === indice && suena ? (
-                  <Icono nombre="pausa" tamano={14} />
-                ) : (
-                  <Icono nombre="reproducir" tamano={14} />
-                )}
-              </span>
               <span className="musica-portada">
                 {urlPortada(pista) ? (
                   <img src={urlPortada(pista)} alt={pista.title} loading="lazy" />
                 ) : (
                   <span className="musica-portada-vacia">♪</span>
                 )}
+                <span className="musica-pista-accion">
+                  {posicion === indice && suena ? (
+                    <Icono nombre="pausa" tamano={16} />
+                  ) : (
+                    <Icono nombre="reproducir" tamano={16} />
+                  )}
+                </span>
+                <span className="musica-pista-duracion">{formatearTiempo(pista.duration)}</span>
               </span>
               <span className="musica-pista-info">
                 <span className="musica-pista-titulo">{pista.title}</span>
                 <span className="musica-pista-artista">{nombreArtista(pista)}</span>
+                <span className="musica-pista-genero">{pista.genre || 'Sin genero'}</span>
               </span>
-              <span className="musica-pista-genero">{pista.genre || 'Sin genero'}</span>
-              <span className="musica-pista-duracion">{formatearTiempo(pista.duration)}</span>
               <button
                 type="button"
                 className="musica-pista-descarga"
@@ -367,6 +396,20 @@ export default function Musica() {
             </div>
           ))}
         </div>
+
+        {itemsCortas.length > 0 && (
+          <section className="musica-cortas">
+            <h2 className="musica-cortas-titulo">Canciones cortas</h2>
+            <LiquidGlassCarousel
+              items={itemsCortas}
+              entry={false}
+              onSelect={(item) => {
+                const posicion = pistas.findIndex((pista) => pista.id === item.id)
+                if (posicion >= 0) reproducir(posicion)
+              }}
+            />
+          </section>
+        )}
       </div>
 
       {pistaActual && (

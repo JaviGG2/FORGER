@@ -1,13 +1,19 @@
 .pie {
   border-top: 1px solid var(--linea);
+  background: var(--fondo-suave);
 }
 
 .pie-interno {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 40px;
   padding: 64px 0 48px;
+}
+
+.pie-bloque {
+  max-width: 320px;
 }
 
 .pie-marca {
@@ -24,6 +30,7 @@
 
 .pie-grupo {
   display: flex;
+  flex-wrap: wrap;
   gap: 64px;
 }
 
@@ -44,6 +51,7 @@
 .pie-columna a {
   color: var(--tinta-suave);
   font-size: 14px;
+  transition: color 0.2s;
 }
 
 .pie-columna a:hover {
