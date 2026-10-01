@@ -1,12 +1,13 @@
+import { Link } from 'react-router-dom'
 import '../css/Banner.css'
 
 export default function Banner() {
     return (
     <>
         <div className="banner-wrap">
-            <img src="/img/pay.png" alt="Banner" />
+            <img src="/img/FORGER-Music.png" alt="Banner" />
         </div>
-        <a className="banner-subtitulo">Compra de manera digital o fisica mucho mas facil</a>
+        <Link className="banner-subtitulo" to="/musica">Escucha tu música favorita en cualquier lugar</Link>
     </>
     )
 }
