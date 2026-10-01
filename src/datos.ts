@@ -32,7 +32,7 @@ export const productos = [
 export const navLinks = [
   { ruta: '/', texto: 'Inicio' },
   { ruta: '/productos', texto: 'Productos' },
-  { ruta: '/eventos', texto: 'Eventos'},
+ 
   { ruta: '/musica', texto: 'Music'}
 ]
 
