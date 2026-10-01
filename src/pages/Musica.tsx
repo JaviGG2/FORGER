@@ -33,6 +33,28 @@ function formatearTiempo(segundos: number): string {
   return `${minutos}:${String(resto).padStart(2, '0')}`
 }
 
+const ICONOS = {
+  reproducir: <path d="M7 4l13 8-13 8z" />,
+  pausa: <path d="M6 4h4v16H6zM14 4h4v16h-4z" />,
+  anterior: <path d="M6 4h2v16H6zM20 4L9 12l11 8z" />,
+  siguiente: <path d="M16 4h2v16h-2zM4 4l11 8L4 20z" />,
+}
+
+function Icono({ nombre, tamano = 20 }: { nombre: keyof typeof ICONOS; tamano?: number }) {
+  return (
+    <svg
+      className="musica-icono"
+      viewBox="0 0 24 24"
+      width={tamano}
+      height={tamano}
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      {ICONOS[nombre]}
+    </svg>
+  )
+}
+
 export default function Musica() {
   const [consulta, setConsulta] = useState('')
   const [busqueda, setBusqueda] = useState('')
@@ -224,7 +246,11 @@ export default function Musica() {
               onClick={() => reproducir(posicion)}
             >
               <span className="musica-pista-accion">
-                {posicion === indice && suena ? '⏸' : '▶'}
+                {posicion === indice && suena ? (
+                  <Icono nombre="pausa" tamano={14} />
+                ) : (
+                  <Icono nombre="reproducir" tamano={14} />
+                )}
               </span>
               <span className="musica-portada">
                 {urlPortada(pista) ? (
@@ -264,7 +290,7 @@ export default function Musica() {
                 onClick={() => cambiarPista(-1)}
                 aria-label="Pista anterior"
               >
-                ⏮
+                <Icono nombre="anterior" />
               </button>
               <button
                 type="button"
@@ -272,7 +298,7 @@ export default function Musica() {
                 onClick={alternarReproduccion}
                 aria-label={suena ? 'Pausar' : 'Reproducir'}
               >
-                {suena ? '⏸' : '▶'}
+                <Icono nombre={suena ? 'pausa' : 'reproducir'} tamano={22} />
               </button>
               <button
                 type="button"
@@ -280,7 +306,7 @@ export default function Musica() {
                 onClick={() => cambiarPista(1)}
                 aria-label="Pista siguiente"
               >
-                ⏭
+                <Icono nombre="siguiente" />
               </button>
             </div>
 

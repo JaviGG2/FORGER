@@ -185,9 +185,14 @@
 }
 
 .musica-pista-accion {
-  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--tinta-suave);
-  text-align: center;
+}
+
+.musica-icono {
+  display: block;
 }
 
 .musica-pista-activa .musica-pista-accion {
