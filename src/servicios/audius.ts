@@ -52,6 +52,17 @@ export function urlAudio(id: string): string {
   return `${HOST}/v1/tracks/${id}/stream?app_name=${APP_NAME}`
 }
 
+/** Descarga el audio completo de una pista como Blob. */
+export async function obtenerBlobAudio(id: string): Promise<Blob> {
+  const respuesta = await fetch(urlAudio(id))
+
+  if (!respuesta.ok) {
+    throw new Error(`Audius respondio ${respuesta.status}`)
+  }
+
+  return respuesta.blob()
+}
+
 /** Mejor portada disponible para la pista. */
 export function urlPortada(track: AudiusTrack): string {
   const arte = track.artwork

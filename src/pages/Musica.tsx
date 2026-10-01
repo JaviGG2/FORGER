@@ -4,12 +4,15 @@ import { Link } from 'react-router-dom'
 import {
   buscarPistas,
   nombreArtista,
+  obtenerBlobAudio,
   obtenerTendencias,
   urlAudio,
   urlPortada,
 } from '../servicios/audius'
 import type { AudiusTrack } from '../servicios/audius'
 import '../css/Musica.css'
+
+const CLAVE_DESCARGA = 'forger123'
 
 const GENEROS = [
   'Electronic',
@@ -38,6 +41,19 @@ const ICONOS = {
   pausa: <path d="M6 4h4v16H6zM14 4h4v16h-4z" />,
   anterior: <path d="M6 4h2v16H6zM20 4L9 12l11 8z" />,
   siguiente: <path d="M16 4h2v16h-2zM4 4l11 8L4 20z" />,
+  descargar: (
+    <>
+      <path d="M11 4h2v7h3l-4 4-4-4h3z" />
+      <path d="M5 18h14v2H5z" />
+    </>
+  ),
+}
+
+/** Nombre de archivo seguro a partir del artista y el titulo. */
+function nombreArchivo(track: AudiusTrack): string {
+  const base = `${nombreArtista(track)} - ${track.title}`
+  const limpio = base.replace(/[\\/:*?"<>|]+/g, '_').trim()
+  return `${limpio || 'FORGER Music'}.mp3`
 }
 
 function Icono({ nombre, tamano = 20 }: { nombre: keyof typeof ICONOS; tamano?: number }) {
@@ -69,6 +85,11 @@ export default function Musica() {
   const [suena, setSuena] = useState(false)
   const [progreso, setProgreso] = useState(0)
   const [duracion, setDuracion] = useState(0)
+  const [descargando, setDescargando] = useState<string | null>(null)
+  const [autorizado, setAutorizado] = useState(false)
+  const [clavePendiente, setClavePendiente] = useState<AudiusTrack | null>(null)
+  const [clave, setClave] = useState('')
+  const [claveError, setClaveError] = useState('')
 
   const audioRef = useRef<HTMLAudioElement>(null)
   const pistaActual = indice >= 0 ? pistas[indice] ?? null : null
@@ -175,6 +196,61 @@ export default function Musica() {
     setProgreso(valor)
   }
 
+  // Pide la clave si aun no se ha autorizado, o descarga directamente.
+  const solicitarDescarga = (pista: AudiusTrack) => {
+    if (descargando) return
+    if (autorizado) {
+      descargar(pista)
+      return
+    }
+    setClave('')
+    setClaveError('')
+    setClavePendiente(pista)
+  }
+
+  const confirmarClave = (evento: FormEvent) => {
+    evento.preventDefault()
+    if (clave.trim() !== CLAVE_DESCARGA) {
+      setClaveError('Clave incorrecta. Intentalo de nuevo.')
+      return
+    }
+    setAutorizado(true)
+    const pista = clavePendiente
+    setClavePendiente(null)
+    setClave('')
+    setClaveError('')
+    if (pista) descargar(pista)
+  }
+
+  const cerrarClave = () => {
+    setClavePendiente(null)
+    setClave('')
+    setClaveError('')
+  }
+
+  // Descarga el audio como blob y lo guarda con el nombre de la pista.
+  const descargar = async (pista: AudiusTrack) => {
+    if (descargando) return
+    setDescargando(pista.id)
+    setError('')
+
+    try {
+      const blob = await obtenerBlobAudio(pista.id)
+      const url = URL.createObjectURL(blob)
+      const enlace = document.createElement('a')
+      enlace.href = url
+      enlace.download = nombreArchivo(pista)
+      document.body.appendChild(enlace)
+      enlace.click()
+      enlace.remove()
+      URL.revokeObjectURL(url)
+    } catch {
+      setError('No se pudo descargar la cancion. Intentalo de nuevo.')
+    } finally {
+      setDescargando(null)
+    }
+  }
+
   return (
     <section className="musica">
       <div className="contenedor">
@@ -239,11 +315,19 @@ export default function Musica() {
 
         <div className="musica-lista">
           {pistas.map((pista, posicion) => (
-            <button
+            <div
               key={pista.id}
-              type="button"
+              role="button"
+              tabIndex={0}
               className={`musica-pista ${posicion === indice ? 'musica-pista-activa' : ''}`}
               onClick={() => reproducir(posicion)}
+              onKeyDown={(evento) => {
+                if (evento.target !== evento.currentTarget) return
+                if (evento.key === 'Enter' || evento.key === ' ') {
+                  evento.preventDefault()
+                  reproducir(posicion)
+                }
+              }}
             >
               <span className="musica-pista-accion">
                 {posicion === indice && suena ? (
@@ -265,7 +349,20 @@ export default function Musica() {
               </span>
               <span className="musica-pista-genero">{pista.genre || 'Sin genero'}</span>
               <span className="musica-pista-duracion">{formatearTiempo(pista.duration)}</span>
-            </button>
+              <button
+                type="button"
+                className="musica-pista-descarga"
+                onClick={(evento) => {
+                  evento.stopPropagation()
+                  solicitarDescarga(pista)
+                }}
+                disabled={descargando === pista.id}
+                aria-label={`Descargar ${pista.title}`}
+                title="Descargar"
+              >
+                <Icono nombre="descargar" tamano={16} />
+              </button>
+            </div>
           ))}
         </div>
       </div>
@@ -308,6 +405,16 @@ export default function Musica() {
               >
                 <Icono nombre="siguiente" />
               </button>
+              <button
+                type="button"
+                className="musica-control"
+                onClick={() => solicitarDescarga(pistaActual)}
+                disabled={descargando === pistaActual.id}
+                aria-label="Descargar cancion"
+                title="Descargar"
+              >
+                <Icono nombre="descargar" />
+              </button>
             </div>
 
             <div className="musica-progreso">
@@ -334,6 +441,33 @@ export default function Musica() {
             onPlay={() => setSuena(true)}
             onPause={() => setSuena(false)}
           />
+        </div>
+      )}
+
+      {clavePendiente && (
+        <div className="musica-clave-fondo" role="dialog" aria-modal="true" aria-label="Clave de descarga">
+          <form className="musica-clave" onSubmit={confirmarClave}>
+            <h2 className="musica-clave-titulo">Descarga protegida</h2>
+            <p className="musica-clave-texto">Introduce la clave para descargar esta cancion.</p>
+            <input
+              className="musica-clave-input"
+              type="password"
+              value={clave}
+              onChange={(evento) => setClave(evento.target.value)}
+              placeholder="Clave"
+              aria-label="Clave de descarga"
+              autoFocus
+            />
+            {claveError && <p className="musica-clave-error">{claveError}</p>}
+            <div className="musica-clave-botones">
+              <button type="button" className="musica-clave-cancelar" onClick={cerrarClave}>
+                Cancelar
+              </button>
+              <button type="submit" className="musica-clave-aceptar">
+                Descargar
+              </button>
+            </div>
+          </form>
         </div>
       )}
     </section>

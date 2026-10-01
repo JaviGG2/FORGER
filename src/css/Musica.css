@@ -160,7 +160,7 @@
 
 .musica-pista {
   display: grid;
-  grid-template-columns: 32px 56px 1fr auto 56px;
+  grid-template-columns: 32px 56px 1fr auto auto 40px;
   align-items: center;
   gap: 16px;
   width: 100%;
@@ -189,6 +189,32 @@
   align-items: center;
   justify-content: center;
   color: var(--tinta-suave);
+}
+
+.musica-pista-descarga {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--linea);
+  border-radius: 50%;
+  color: var(--tinta-suave);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.musica-pista-descarga:hover {
+  color: var(--tinta);
+  border-color: var(--linea-fuerte);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.musica-pista-descarga:disabled {
+  opacity: 0.5;
+  cursor: wait;
 }
 
 .musica-icono {
@@ -392,6 +418,105 @@
   background: var(--tinta);
 }
 
+/* Clave de descarga */
+.musica-clave-fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+.musica-clave {
+  width: 100%;
+  max-width: 360px;
+  background: var(--fondo-suave);
+  border: 1px solid var(--linea-fuerte);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+}
+
+.musica-clave-titulo {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.musica-clave-texto {
+  font-size: 13px;
+  color: var(--tinta-suave);
+  margin-bottom: 16px;
+}
+
+.musica-clave-input {
+  width: 100%;
+  background: var(--fondo);
+  border: 1px solid var(--linea);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--tinta);
+  font-family: var(--fuente-texto);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.musica-clave-input:focus {
+  border-color: var(--linea-fuerte);
+}
+
+.musica-clave-error {
+  color: #ff6b6b;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+.musica-clave-botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.musica-clave-cancelar {
+  background: transparent;
+  border: 1px solid var(--linea);
+  border-radius: 10px;
+  padding: 10px 18px;
+  color: var(--tinta-suave);
+  font-family: var(--fuente-texto);
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.musica-clave-cancelar:hover {
+  border-color: var(--linea-fuerte);
+  color: var(--tinta);
+}
+
+.musica-clave-aceptar {
+  background: var(--tinta);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  color: var(--fondo);
+  font-family: var(--fuente-titulo);
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.musica-clave-aceptar:hover {
+  opacity: 0.85;
+}
+
 /* Responsive */
 @media (max-width: 720px) {
   .musica {
@@ -411,7 +536,7 @@
   }
 
   .musica-pista {
-    grid-template-columns: 24px 48px 1fr 48px;
+    grid-template-columns: 24px 48px 1fr auto 40px;
     gap: 12px;
   }
 
