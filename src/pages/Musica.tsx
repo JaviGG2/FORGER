@@ -260,6 +260,8 @@ export default function Musica() {
           <h1 className="musica-titulo">
             FORGER <span className="musica-titulo-music">Music</span>
           </h1>
+
+          <a className="beta">BETA</a>
           
         </header>
 

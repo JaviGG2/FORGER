@@ -22,6 +22,17 @@
   text-transform: none;
 }
 
+.beta {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 3px 10px;
+  border: 1px solid #fff;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
 .musica-subtitulo {
   color: var(--tinta-suave);
   font-size: 14px;
