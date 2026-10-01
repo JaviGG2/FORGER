@@ -26,11 +26,22 @@
   text-align: center;
   font-size: 14px;
   color: var(--tinta-suave);
-  margin-top: 35px;
+  margin-top: 5px;
 }
 
 .banner-subtitulo:hover {
   color: var(--tinta);
+}
+
+.btn-music {
+  display: block;
+  width: fit-content;
+  margin: 20px auto 0;
+  padding: 10px 24px;
+  background: #fff;
+  color: #000;
+  text-align: center;
+  border-radius: 8px;
 }
 
 @media (max-width: 800px) {

@@ -4,10 +4,11 @@ import '../css/Banner.css'
 export default function Banner() {
     return (
     <>
-        <div className="banner-wrap">
+        <Link className="banner-wrap" to="/musica">
             <img src="/img/FORGER-Music.png" alt="Banner" />
-        </div>
+        </Link>
         <Link className="banner-subtitulo" to="/musica">Escucha tu música favorita en cualquier lugar</Link>
+        <Link className="btn-music" to="/musica">Escuchar</Link>
     </>
     )
 }
