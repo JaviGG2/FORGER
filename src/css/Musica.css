@@ -12,7 +12,7 @@
 }
 
 .musica-titulo {
-  font-size: 56px;
+  font-size: 80px;
   margin: 0;
   line-height: 1;
   letter-spacing: 0.02em;
@@ -198,6 +198,26 @@
 
 .musica-error {
   color: #ff6b6b;
+}
+
+/* Loader */
+.ld-pie {
+  width: 40px;
+  height: 40px;
+  margin: 48px auto;
+  border-radius: 50%;
+  background: conic-gradient(var(--tinta) var(--ang), color-mix(in srgb, var(--tinta) 15%, transparent) 0);
+  animation: pie 2.4s ease-in-out infinite;
+}
+
+@keyframes pie {
+  to { --ang: 360deg; }
+}
+
+@property --ang {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
 }
 
 /* Lista de pistas */
@@ -605,7 +625,7 @@
 /* Responsive */
 @media (max-width: 720px) {
   .musica {
-    padding-bottom: 220px;
+    padding-bottom: 260px;
   }
 
   .musica-titulo {
@@ -625,18 +645,77 @@
     gap: 12px;
   }
 
+  .musica-player {
+    padding: 16px 0;
+  }
+
   .musica-player-interno {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 14px;
     text-align: center;
+    padding: 16px 20px;
+    margin-top: 0;
   }
 
   .musica-player-info {
     justify-content: center;
+    gap: 14px;
+  }
+
+  .musica-player-portada {
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+  }
+
+  .musica-player-titulo {
+    font-size: 16px;
+  }
+
+  .musica-player-artista {
+    font-size: 13px;
   }
 
   .musica-player-controles {
     justify-content: center;
+    gap: 16px;
+    padding-top: 4px;
+  }
+
+  .musica-control {
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+  }
+
+  .musica-control-principal {
+    width: 56px;
+    height: 56px;
+    font-size: 20px;
+  }
+
+  .musica-progreso {
+    gap: 16px;
+    padding: 0 8px;
+  }
+
+  .musica-tiempo {
+    font-size: 13px;
+    min-width: 44px;
+  }
+
+  .musica-barra {
+    height: 5px;
+  }
+
+  .musica-barra::-webkit-slider-thumb {
+    width: 14px;
+    height: 14px;
+  }
+
+  .musica-barra::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
   }
 }
 

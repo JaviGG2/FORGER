@@ -338,7 +338,7 @@ export default function Musica() {
           ))}
         </div>
 
-        {cargando && <p className="musica-estado">Cargando pistas...</p>}
+        {cargando && <div className="ld-pie" aria-label="Cargando pistas..." />}
         {!cargando && error && <p className="musica-estado musica-error">{error}</p>}
         {!cargando && !error && pistas.length === 0 && (
           <p className="musica-estado">No se encontraron canciones.</p>
@@ -425,6 +425,21 @@ export default function Musica() {
               </span>
             </div>
 
+            <div className="musica-progreso">
+              <span className="musica-tiempo">{formatearTiempo(progreso)}</span>
+              <input
+                className="musica-barra"
+                type="range"
+                min={0}
+                max={duracion || 0}
+                step={1}
+                value={progreso}
+                onChange={(evento) => saltarA(Number(evento.target.value))}
+                aria-label="Progreso de la cancion"
+              />
+              <span className="musica-tiempo">{formatearTiempo(duracion)}</span>
+            </div>
+
             <div className="musica-player-controles">
               <button
                 type="button"
@@ -460,21 +475,6 @@ export default function Musica() {
               >
                 <Icono nombre="descargar" />
               </button>
-            </div>
-
-            <div className="musica-progreso">
-              <span className="musica-tiempo">{formatearTiempo(progreso)}</span>
-              <input
-                className="musica-barra"
-                type="range"
-                min={0}
-                max={duracion || 0}
-                step={1}
-                value={progreso}
-                onChange={(evento) => saltarA(Number(evento.target.value))}
-                aria-label="Progreso de la cancion"
-              />
-              <span className="musica-tiempo">{formatearTiempo(duracion)}</span>
             </div>
           </div>
 
