@@ -1,0 +1,435 @@
+/* ============================================================
+   Musica.css · Estilos de FORGER Music
+   ============================================================ */
+
+.musica {
+  padding: 64px 0 160px;
+}
+
+.musica-cabecera {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.musica-titulo {
+  font-size: 56px;
+  margin-top: 20px;
+}
+
+.musica-titulo-music {
+  font-family: var(--fuente-texto);
+  font-weight: 600;
+  text-transform: none;
+}
+
+.musica-subtitulo {
+  color: var(--tinta-suave);
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-top: 12px;
+}
+
+/* Buscador */
+.musica-buscador {
+  display: flex;
+  gap: 12px;
+  max-width: 640px;
+  margin: 0 auto 24px;
+}
+
+.musica-campo {
+  position: relative;
+  display: flex;
+  flex: 1;
+}
+
+.musica-input {
+  flex: 1;
+  background: var(--fondo-suave);
+  border: 1px solid var(--linea);
+  border-radius: 10px;
+  padding: 14px 44px 14px 16px;
+  color: var(--tinta);
+  font-family: var(--fuente-texto);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.musica-limpiar {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  background: var(--linea);
+  color: var(--tinta);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.musica-limpiar:hover {
+  background: var(--linea-fuerte);
+}
+
+.musica-input::placeholder {
+  color: var(--tinta-suave);
+}
+
+.musica-input:focus {
+  border-color: var(--linea-fuerte);
+}
+
+.musica-boton {
+  background: var(--tinta);
+  color: var(--fondo);
+  border: none;
+  border-radius: 10px;
+  padding: 0 24px;
+  font-family: var(--fuente-titulo);
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.musica-boton:hover {
+  opacity: 0.85;
+}
+
+/* Generos */
+.musica-generos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.musica-genero {
+  background: transparent;
+  border: 1px solid var(--linea);
+  border-radius: 999px;
+  color: var(--tinta-suave);
+  padding: 8px 16px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.musica-genero:hover {
+  border-color: var(--linea-fuerte);
+  color: var(--tinta);
+}
+
+.musica-genero-activo {
+  background: var(--tinta);
+  border-color: var(--tinta);
+  color: var(--fondo);
+}
+
+/* Estados */
+.musica-estado {
+  text-align: center;
+  color: var(--tinta-suave);
+  padding: 48px 0;
+}
+
+.musica-error {
+  color: #ff6b6b;
+}
+
+/* Lista de pistas */
+.musica-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.musica-pista {
+  display: grid;
+  grid-template-columns: 32px 56px 1fr auto 56px;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  text-align: left;
+  background: var(--fondo-suave);
+  border: 1px solid var(--linea);
+  border-radius: 12px;
+  padding: 10px 16px;
+  color: var(--tinta);
+  font-family: var(--fuente-texto);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.musica-pista:hover {
+  border-color: var(--linea-fuerte);
+}
+
+.musica-pista-activa {
+  border-color: var(--tinta);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.musica-pista-accion {
+  font-size: 14px;
+  color: var(--tinta-suave);
+  text-align: center;
+}
+
+.musica-pista-activa .musica-pista-accion {
+  color: var(--tinta);
+}
+
+.musica-portada {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.musica-portada img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.musica-portada-vacia {
+  color: var(--tinta-suave);
+  font-size: 20px;
+}
+
+.musica-pista-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.musica-pista-titulo {
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.musica-pista-artista {
+  font-size: 12px;
+  color: var(--tinta-suave);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.musica-pista-genero {
+  font-size: 11px;
+  color: var(--tinta-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.musica-pista-duracion {
+  font-size: 13px;
+  color: var(--tinta-suave);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Reproductor fijo */
+.musica-player {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 900;
+  background: rgba(0, 0, 0, 0.94);
+  border-top: 1px solid var(--linea);
+  backdrop-filter: blur(10px);
+}
+
+.musica-player-interno {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
+  padding: 14px 20px;
+}
+
+.musica-player-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.musica-player-portada {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.musica-player-textos {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.musica-player-titulo {
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.musica-player-artista {
+  font-size: 12px;
+  color: var(--tinta-suave);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.musica-player-controles {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.musica-control {
+  background: transparent;
+  border: 1px solid var(--linea);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  color: var(--tinta);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.musica-control:hover {
+  border-color: var(--linea-fuerte);
+}
+
+.musica-control-principal {
+  background: var(--tinta);
+  border-color: var(--tinta);
+  color: var(--fondo);
+  width: 48px;
+  height: 48px;
+  font-size: 16px;
+}
+
+.musica-control-principal:hover {
+  opacity: 0.85;
+}
+
+.musica-progreso {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.musica-tiempo {
+  font-size: 12px;
+  color: var(--tinta-suave);
+  font-variant-numeric: tabular-nums;
+  min-width: 40px;
+  text-align: center;
+}
+
+.musica-barra {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  outline: none;
+}
+
+.musica-barra::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--tinta);
+}
+
+.musica-barra::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: none;
+  border-radius: 50%;
+  background: var(--tinta);
+}
+
+/* Responsive */
+@media (max-width: 720px) {
+  .musica {
+    padding-bottom: 220px;
+  }
+
+  .musica-titulo {
+    font-size: 40px;
+  }
+
+  .musica-buscador {
+    flex-direction: column;
+  }
+
+  .musica-boton {
+    padding: 14px 24px;
+  }
+
+  .musica-pista {
+    grid-template-columns: 24px 48px 1fr 48px;
+    gap: 12px;
+  }
+
+  .musica-portada {
+    width: 48px;
+    height: 48px;
+  }
+
+  .musica-pista-genero {
+    display: none;
+  }
+
+  .musica-player-interno {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .musica-player-info {
+    justify-content: center;
+  }
+
+  .musica-player-controles {
+    justify-content: center;
+  }
+}

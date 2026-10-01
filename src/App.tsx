@@ -8,6 +8,8 @@ import ProductoGuru from './pages/ProductoGuru'
 import ProductoBoss from './pages/ProductoBoss'
 import Eventos from './pages/eventos/Eventos'
 import EventoForgerLan from './pages/eventos/EventoForgerLive'
+import SistemaOperativo from './pages/SistemaOperativo'
+import Musica from './pages/Musica'
 import ScrollToTop from './components/ScrollToTop'
 
 import './css/estilos.css'
@@ -25,6 +27,8 @@ export default function App() {
           <Route path="/productos/boss" element={<ProductoBoss />} />
           <Route path="/eventos" element={<Eventos />} />
           <Route path="/eventos/forger-live-25" element={<EventoForgerLan />} />
+          <Route path="/sistema-operativo" element={<SistemaOperativo />} />
+          <Route path="/musica" element={<Musica />} />
         </Route>
       </Routes>
     </BrowserRouter>
