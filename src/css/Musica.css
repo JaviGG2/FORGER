@@ -156,6 +156,39 @@
   opacity: 0.85;
 }
 
+/* Tabs */
+.musica-tabs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 24px 0 16px;
+}
+
+.musica-tab {
+  background: transparent;
+  border: 1px solid var(--linea);
+  border-radius: 999px;
+  color: var(--tinta-suave);
+  padding: 10px 20px;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-family: var(--fuente-titulo);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.musica-tab:hover {
+  border-color: var(--linea-fuerte);
+  color: var(--tinta);
+}
+
+.musica-tab-activa {
+  background: var(--tinta);
+  border-color: var(--tinta);
+  color: var(--fondo);
+}
+
 /* Generos */
 .musica-generos {
   display: flex;
@@ -383,6 +416,36 @@
 .musica-cortas-titulo {
   font-size: 24px;
   margin-bottom: 20px;
+}
+
+/* Spotify */
+.musica-spotify {
+  margin-top: 64px;
+}
+
+.musica-spotify-titulo {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.musica-spotify-card {
+  background: var(--fondo-suave);
+  border: 1px solid var(--linea);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.15s;
+}
+
+.musica-spotify-card:hover {
+  border-color: var(--linea-fuerte);
+  transform: translateY(-2px);
+}
+
+.musica-spotify-iframe {
+  width: 100%;
+  max-width: 100%;
+  display: block;
+  border-radius: 12px;
 }
 
 /* Reproductor fijo */

@@ -77,6 +77,7 @@ export default function Musica() {
   const [busqueda, setBusqueda] = useState('')
   const [genero, setGenero] = useState<string | null>(null)
   const [generoPrevio, setGeneroPrevio] = useState<string | null>(null)
+  const [vista, setVista] = useState<'home' | 'spotify'>('home')
 
   const [pistas, setPistas] = useState<AudiusTrack[]>([])
   const [cargando, setCargando] = useState(true)
@@ -318,7 +319,32 @@ export default function Musica() {
           <button className="musica-boton" type="submit">Buscar</button>
         </form>
 
-        <div className="musica-generos">
+        <nav className="musica-tabs" role="tablist" aria-label="Vistas de musica">
+          <button
+            role="tab"
+            type="button"
+            className={`musica-tab ${vista === 'home' ? 'musica-tab-activa' : ''}`}
+            onClick={() => setVista('home')}
+            aria-selected={vista === 'home'}
+            aria-controls="panel-home"
+          >
+            Home
+          </button>
+          <button
+            role="tab"
+            type="button"
+            className={`musica-tab ${vista === 'spotify' ? 'musica-tab-activa' : ''}`}
+            onClick={() => setVista('spotify')}
+            aria-selected={vista === 'spotify'}
+            aria-controls="panel-spotify"
+          >
+            Spotify
+          </button>
+        </nav>
+
+        {vista === 'home' && (
+          <>
+            <div className="musica-generos">
           <button
             type="button"
             className={`musica-genero ${genero === null && !busqueda ? 'musica-genero-activo' : ''}`}
@@ -408,6 +434,40 @@ export default function Musica() {
                 if (posicion >= 0) reproducir(posicion)
               }}
             />
+          </section>
+        )}
+          </>
+        )}
+
+        {vista === 'spotify' && (
+          <section className="musica-spotify" role="tabpanel" id="panel-spotify" aria-labelledby="tab-spotify">
+            <h2 className="musica-spotify-titulo">Spotify</h2>
+            <div className="musica-spotify-card">
+              <iframe
+                data-testid="embed-iframe"
+                src="https://open.spotify.com/embed/artist/1Xyo4u8uXC1ZmMpatF05PJ?utm_source=generator&theme=0&si=6c9c637cc3d44238"
+                width="100%"
+                height={352}
+                frameBorder="0"
+                allowFullScreen
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"
+                className="musica-spotify-iframe"
+              />
+            </div>
+            <div className="musica-spotify-card" style={{ marginTop: '20px' }}>
+              <iframe
+                data-testid="embed-iframe"
+                src="https://open.spotify.com/embed/playlist/37i9dQZEVXbNG2KDcFcKOF?utm_source=generator&theme=0&si=f463bf0863d34f1b"
+                width="100%"
+                height={352}
+                frameBorder="0"
+                allowFullScreen
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"
+                className="musica-spotify-iframe"
+              />
+            </div>
           </section>
         )}
       </div>
