@@ -9,6 +9,18 @@ import {
   urlPortada,
 } from '../servicios/audius'
 import type { AudiusTrack } from '../servicios/audius'
+import {
+  ESTACIONES_RAINWAVE,
+  albumRainwave,
+  artistasRainwave,
+  cancionActual,
+  estacionVecina,
+  obtenerInfoRainwave,
+  siguienteCancion,
+  urlCaratulaRainwave,
+  urlStreamRainwave,
+} from '../servicios/rainwave'
+import type { EstacionRainwave, RainwaveInfo } from '../servicios/rainwave'
 import LiquidGlassCarousel from '../components/ui/LiquidGlassCarousel'
 import type { LiquidGlassItem } from '../components/ui/LiquidGlassCarousel'
 import '../css/Musica.css'
@@ -77,7 +89,7 @@ export default function Musica() {
   const [busqueda, setBusqueda] = useState('')
   const [genero, setGenero] = useState<string | null>(null)
   const [generoPrevio, setGeneroPrevio] = useState<string | null>(null)
-  const [vista, setVista] = useState<'home' | 'spotify'>('home')
+  const [vista, setVista] = useState<'home' | 'juegos' | 'spotify'>('home')
 
   const [pistas, setPistas] = useState<AudiusTrack[]>([])
   const [cargando, setCargando] = useState(true)
@@ -93,28 +105,30 @@ export default function Musica() {
   const [clave, setClave] = useState('')
   const [claveError, setClaveError] = useState('')
 
-  const audioRef = useRef<HTMLAudioElement>(null)
-  const musicTextRef = useRef<HTMLSpanElement>(null)
-  const pistaActual = indice >= 0 ? pistas[indice] ?? null : null
+  const [modo, setModo] = useState<'audius' | 'radio'>('audius')
+  const [estacion, setEstacion] = useState<EstacionRainwave>(ESTACIONES_RAINWAVE[0])
+  const [conexionRadio, setConexionRadio] = useState(0)
+  const [infoRadio, setInfoRadio] = useState<RainwaveInfo | null>(null)
+  const [radioCargando, setRadioCargando] = useState(false)
+  const [radioError, setRadioError] = useState('')
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      musicTextRef.current?.classList.add('fx-active')
-      setTimeout(() => {
-        musicTextRef.current?.classList.remove('fx-active')
-      }, 2000)
-    }, 30000)
-    return () => clearInterval(interval)
-  }, [])
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const pistaActual = indice >= 0 ? pistas[indice] ?? null : null
+  const enRadio = modo === 'radio'
+  const cancionRadio = cancionActual(infoRadio)
+  const proximaRadio = siguienteCancion(infoRadio)
+  const portadaRadio = urlCaratulaRainwave(cancionRadio)
 
   useEffect(() => {
     let activo = true
     setCargando(true)
     setError('')
     setIndice(-1)
-    setSuena(false)
-    setProgreso(0)
-    setDuracion(0)
+    if (!enRadio) {
+      setSuena(false)
+      setProgreso(0)
+      setDuracion(0)
+    }
 
     const peticion = busqueda
       ? buscarPistas(busqueda)
@@ -141,12 +155,54 @@ export default function Musica() {
 
   useEffect(() => {
     const audio = audioRef.current
-    if (!audio || !pistaActual) return
+    if (!audio || modo !== 'audius' || !pistaActual) return
 
     audio.src = urlAudio(pistaActual.id)
     audio.play().then(() => setSuena(true)).catch(() => setSuena(false))
     setProgreso(0)
-  }, [pistaActual])
+  }, [pistaActual, modo])
+
+  useEffect(() => {
+    if (!enRadio || conexionRadio === 0) return
+    const audio = audioRef.current
+    if (!audio) return
+
+    setRadioError('')
+    setProgreso(0)
+    setDuracion(0)
+    audio.src = urlStreamRainwave(estacion)
+    audio.play().then(() => setSuena(true)).catch(() => setSuena(false))
+  }, [enRadio, conexionRadio, estacion])
+
+  useEffect(() => {
+    if (!enRadio) return
+    let activo = true
+
+    const cargar = () => {
+      setRadioCargando(true)
+      obtenerInfoRainwave(estacion.sid)
+        .then((info) => {
+          if (!activo) return
+          setInfoRadio(info)
+          setRadioError('')
+        })
+        .catch(() => {
+          if (activo) setRadioError('No se pudieron cargar los datos de la emisora.')
+        })
+        .finally(() => {
+          if (activo) setRadioCargando(false)
+        })
+    }
+
+    setInfoRadio(null)
+    cargar()
+    const intervalo = window.setInterval(cargar, 45000)
+
+    return () => {
+      activo = false
+      window.clearInterval(intervalo)
+    }
+  }, [enRadio, estacion.sid])
 
   const enviarBusqueda = (evento: FormEvent) => {
     evento.preventDefault()
@@ -172,16 +228,47 @@ export default function Musica() {
 
 
   const reproducir = (posicion: number) => {
-    if (posicion === indice) {
+    if (!enRadio && posicion === indice) {
       alternarReproduccion()
       return
     }
+    setModo('audius')
     setIndice(posicion)
+  }
+
+  const sintonizar = (nueva: EstacionRainwave) => {
+    if (enRadio && nueva.sid === estacion.sid) {
+      if (audioRef.current?.paused) {
+        setConexionRadio((valor) => valor + 1)
+      }
+      return
+    }
+    setModo('radio')
+    setIndice(-1)
+    setRadioError('')
+    setInfoRadio(null)
+    setEstacion(nueva)
+    setConexionRadio((valor) => valor + 1)
+  }
+
+  const cambiarEstacion = (delta: number) => {
+    sintonizar(estacionVecina(estacion, delta))
   }
 
   const alternarReproduccion = () => {
     const audio = audioRef.current
     if (!audio) return
+
+    if (enRadio) {
+      if (audio.paused) {
+        setConexionRadio((valor) => valor + 1)
+      } else {
+        audio.pause()
+        setSuena(false)
+      }
+      return
+    }
+
     if (!pistaActual) {
       if (pistas.length > 0) setIndice(0)
       return
@@ -286,7 +373,7 @@ export default function Musica() {
 
         <header className="musica-cabecera">
           <h1 className="musica-titulo">
-            FORGER <span className="musica-titulo-music" ref={musicTextRef}>Music</span>
+            <img className="musica-logo" src="/img/Music-logo.png" alt="FORGER Music" />
           </h1>
 
           <a className="beta">BETA</a>
@@ -329,6 +416,16 @@ export default function Musica() {
             aria-controls="panel-home"
           >
             Home
+          </button>
+          <button
+            role="tab"
+            type="button"
+            className={`musica-tab ${vista === 'juegos' ? 'musica-tab-activa' : ''}`}
+            onClick={() => setVista('juegos')}
+            aria-selected={vista === 'juegos'}
+            aria-controls="panel-juegos"
+          >
+            Juegos
           </button>
           <button
             role="tab"
@@ -439,6 +536,119 @@ export default function Musica() {
           </>
         )}
 
+        {vista === 'juegos' && (
+          <section className="musica-juegos" role="tabpanel" id="panel-juegos" aria-labelledby="tab-juegos">
+            <div className="musica-juegos-cabecera">
+              <h2 className="musica-spotify-titulo">Radio de videojuegos</h2>
+              <p className="musica-juegos-sub">
+                Bandas sonoras, remixes y chiptune en directo. Elige una emisora y deja que suene.
+              </p>
+            </div>
+
+            <div className="musica-estaciones">
+              {ESTACIONES_RAINWAVE.map((item) => {
+                const activa = enRadio && estacion.sid === item.sid
+                return (
+                  <button
+                    key={item.key}
+                    type="button"
+                    className={`musica-estacion ${activa ? 'musica-estacion-activa' : ''}`}
+                    onClick={() => sintonizar(item)}
+                  >
+                    <span className="musica-estacion-fila">
+                      <span className="musica-estacion-nombre">{item.nombre}</span>
+                      {activa ? (
+                        <span className="musica-live">EN VIVO</span>
+                      ) : (
+                        <span className="musica-estacion-play">
+                          <Icono nombre="reproducir" tamano={14} />
+                        </span>
+                      )}
+                    </span>
+                    <span className="musica-estacion-desc">{item.descripcion}</span>
+                    {activa && (
+                      <span className="musica-estacion-ahora">
+                        {radioCargando && !cancionRadio
+                          ? 'Conectando...'
+                          : cancionRadio
+                            ? `${cancionRadio.title} · ${albumRainwave(cancionRadio)}`
+                            : 'Sin metadatos'}
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+
+            {enRadio && (
+              <div className="musica-radio">
+                <div className="musica-radio-portada">
+                  {portadaRadio ? (
+                    <img src={portadaRadio} alt={cancionRadio?.title ?? estacion.nombre} />
+                  ) : (
+                    <span className="musica-portada-vacia">♪</span>
+                  )}
+                  {suena && <span className="musica-live musica-radio-live">EN VIVO</span>}
+                </div>
+
+                <div className="musica-radio-detalle">
+                  <span className="musica-radio-emisora">{estacion.nombre}</span>
+                  <h3 className="musica-radio-titulo">
+                    {cancionRadio?.title || 'Conectando con Rainwave...'}
+                  </h3>
+                  <p className="musica-radio-meta">
+                    {cancionRadio
+                      ? `${artistasRainwave(cancionRadio)} · ${albumRainwave(cancionRadio)}`
+                      : estacion.descripcion}
+                  </p>
+                  {proximaRadio && (
+                    <p className="musica-radio-siguiente">
+                      A continuacion: {proximaRadio.title}
+                      {albumRainwave(proximaRadio) ? ` · ${albumRainwave(proximaRadio)}` : ''}
+                    </p>
+                  )}
+                  {radioError && <p className="musica-radio-error">{radioError}</p>}
+
+                  <div className="musica-radio-acciones">
+                    <button
+                      type="button"
+                      className="musica-control"
+                      onClick={() => cambiarEstacion(-1)}
+                      aria-label="Emisora anterior"
+                    >
+                      <Icono nombre="anterior" />
+                    </button>
+                    <button
+                      type="button"
+                      className="musica-control musica-control-principal"
+                      onClick={alternarReproduccion}
+                      aria-label={suena ? 'Pausar radio' : 'Reproducir radio'}
+                    >
+                      <Icono nombre={suena ? 'pausa' : 'reproducir'} tamano={22} />
+                    </button>
+                    <button
+                      type="button"
+                      className="musica-control"
+                      onClick={() => cambiarEstacion(1)}
+                      aria-label="Emisora siguiente"
+                    >
+                      <Icono nombre="siguiente" />
+                    </button>
+                  </div>
+
+                  <p className="musica-radio-fuente">
+                    Radio en directo por{' '}
+                    <a href="https://rainwave.cc" target="_blank" rel="noreferrer">
+                      Rainwave
+                    </a>
+                    . Contenido no disponible para descarga.
+                  </p>
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
         {vista === 'spotify' && (
           <section className="musica-spotify" role="tabpanel" id="panel-spotify" aria-labelledby="tab-spotify">
             <h2 className="musica-spotify-titulo">Spotify</h2>
@@ -472,79 +682,150 @@ export default function Musica() {
         )}
       </div>
 
-      {pistaActual && (
+      {(pistaActual || enRadio) && (
         <div className="musica-player">
           <div className="contenedor musica-player-interno">
             <div className="musica-player-info">
-              {urlPortada(pistaActual) && (
-                <img className="musica-player-portada" src={urlPortada(pistaActual)} alt={pistaActual.title} />
-              )}
+              {enRadio
+                ? portadaRadio && (
+                    <img
+                      className="musica-player-portada"
+                      src={portadaRadio}
+                      alt={cancionRadio?.title ?? estacion.nombre}
+                    />
+                  )
+                : pistaActual &&
+                  urlPortada(pistaActual) && (
+                    <img
+                      className="musica-player-portada"
+                      src={urlPortada(pistaActual)}
+                      alt={pistaActual.title}
+                    />
+                  )}
               <span className="musica-player-textos">
-                <span className="musica-player-titulo">{pistaActual.title}</span>
-                <span className="musica-player-artista">{nombreArtista(pistaActual)}</span>
+                <span className="musica-player-titulo">
+                  {enRadio ? cancionRadio?.title || estacion.nombre : pistaActual?.title}
+                </span>
+                <span className="musica-player-artista">
+                  {enRadio
+                    ? cancionRadio
+                      ? `${artistasRainwave(cancionRadio)} · ${estacion.nombre}`
+                      : estacion.descripcion
+                    : pistaActual && nombreArtista(pistaActual)}
+                </span>
               </span>
             </div>
 
-            <div className="musica-progreso">
-              <span className="musica-tiempo">{formatearTiempo(progreso)}</span>
-              <input
-                className="musica-barra"
-                type="range"
-                min={0}
-                max={duracion || 0}
-                step={1}
-                value={progreso}
-                onChange={(evento) => saltarA(Number(evento.target.value))}
-                aria-label="Progreso de la cancion"
-              />
-              <span className="musica-tiempo">{formatearTiempo(duracion)}</span>
-            </div>
+            {enRadio ? (
+              <div className="musica-player-radio">
+                <span className="musica-live">EN VIVO</span>
+                <span className="musica-player-estacion">{estacion.nombre}</span>
+                {radioError && <span className="musica-player-radio-error">{radioError}</span>}
+              </div>
+            ) : (
+              <div className="musica-progreso">
+                <span className="musica-tiempo">{formatearTiempo(progreso)}</span>
+                <input
+                  className="musica-barra"
+                  type="range"
+                  min={0}
+                  max={duracion || 0}
+                  step={1}
+                  value={progreso}
+                  onChange={(evento) => saltarA(Number(evento.target.value))}
+                  aria-label="Progreso de la cancion"
+                />
+                <span className="musica-tiempo">{formatearTiempo(duracion)}</span>
+              </div>
+            )}
 
             <div className="musica-player-controles">
-              <button
-                type="button"
-                className="musica-control"
-                onClick={() => cambiarPista(-1)}
-                aria-label="Pista anterior"
-              >
-                <Icono nombre="anterior" />
-              </button>
-              <button
-                type="button"
-                className="musica-control musica-control-principal"
-                onClick={alternarReproduccion}
-                aria-label={suena ? 'Pausar' : 'Reproducir'}
-              >
-                <Icono nombre={suena ? 'pausa' : 'reproducir'} tamano={22} />
-              </button>
-              <button
-                type="button"
-                className="musica-control"
-                onClick={() => cambiarPista(1)}
-                aria-label="Pista siguiente"
-              >
-                <Icono nombre="siguiente" />
-              </button>
-              <button
-                type="button"
-                className="musica-control"
-                onClick={() => solicitarDescarga(pistaActual)}
-                disabled={descargando === pistaActual.id}
-                aria-label="Descargar cancion"
-                title="Descargar"
-              >
-                <Icono nombre="descargar" />
-              </button>
+              {enRadio ? (
+                <>
+                  <button
+                    type="button"
+                    className="musica-control"
+                    onClick={() => cambiarEstacion(-1)}
+                    aria-label="Emisora anterior"
+                  >
+                    <Icono nombre="anterior" />
+                  </button>
+                  <button
+                    type="button"
+                    className="musica-control musica-control-principal"
+                    onClick={alternarReproduccion}
+                    aria-label={suena ? 'Pausar radio' : 'Reproducir radio'}
+                  >
+                    <Icono nombre={suena ? 'pausa' : 'reproducir'} tamano={22} />
+                  </button>
+                  <button
+                    type="button"
+                    className="musica-control"
+                    onClick={() => cambiarEstacion(1)}
+                    aria-label="Emisora siguiente"
+                  >
+                    <Icono nombre="siguiente" />
+                  </button>
+                </>
+              ) : (
+                pistaActual && (
+                  <>
+                    <button
+                      type="button"
+                      className="musica-control"
+                      onClick={() => cambiarPista(-1)}
+                      aria-label="Pista anterior"
+                    >
+                      <Icono nombre="anterior" />
+                    </button>
+                    <button
+                      type="button"
+                      className="musica-control musica-control-principal"
+                      onClick={alternarReproduccion}
+                      aria-label={suena ? 'Pausar' : 'Reproducir'}
+                    >
+                      <Icono nombre={suena ? 'pausa' : 'reproducir'} tamano={22} />
+                    </button>
+                    <button
+                      type="button"
+                      className="musica-control"
+                      onClick={() => cambiarPista(1)}
+                      aria-label="Pista siguiente"
+                    >
+                      <Icono nombre="siguiente" />
+                    </button>
+                    <button
+                      type="button"
+                      className="musica-control"
+                      onClick={() => solicitarDescarga(pistaActual)}
+                      disabled={descargando === pistaActual.id}
+                      aria-label="Descargar cancion"
+                      title="Descargar"
+                    >
+                      <Icono nombre="descargar" />
+                    </button>
+                  </>
+                )
+              )}
             </div>
           </div>
 
           <audio
             ref={audioRef}
-            onTimeUpdate={(evento) => setProgreso(evento.currentTarget.currentTime)}
-            onLoadedMetadata={(evento) => setDuracion(evento.currentTarget.duration)}
-            onEnded={() => cambiarPista(1)}
+            onTimeUpdate={(evento) => {
+              if (!enRadio) setProgreso(evento.currentTarget.currentTime)
+            }}
+            onLoadedMetadata={(evento) => {
+              if (!enRadio) setDuracion(evento.currentTarget.duration)
+            }}
+            onEnded={() => {
+              if (!enRadio) cambiarPista(1)
+            }}
             onPlay={() => setSuena(true)}
             onPause={() => setSuena(false)}
+            onError={() => {
+              if (enRadio) setRadioError('Se corto la senal. Pulsa reproducir para reconectar.')
+            }}
           />
         </div>
       )}
